@@ -1,0 +1,78 @@
+ ____ ___ _   _ ___ ___  
+|  _ \_ _| | | |_ _/ _ \ 
+| |_) | || | | || | | | |
+|  __/| || |_| || | |_| |
+|_|  |___|\___/|___\___/ 
+                         
+Lucas Teske
+
+
+The PIUIO works in a very simple way. 
+There are 8 bytes transmitted every cycle, 
+but only two short ints are used.
+The other bytes are just 0xFF Junk
+
+So basicly for the input we have
+ _______________________ ________________________ 
+|          P1           |           P2           |
+|   BYTE0       BYTE1   |    BYTE2       BYTE3   |
+| 00000000    00000000  |  00000000    00000000  |
+| xxxEDCBA    IHxxxFGx  |  xxxEDCBA    IHxxxFGx  |
+|_______________________|________________________|
+ _________________________________________________
+|                    Not Used                     |
+|     BYTE4       BYTE5       BYTE6       BYTE7   |
+|   111111111    11111111    11111111    11111111 |
+|   xxxxxxxxx    xxxxxxxx    xxxxxxxx    xxxxxxxx | 
+|_________________________________________________|   
+                      
+WITH:
+
+A => Sensor Up Left
+B => Sensor Up Right
+C => Sensor Center
+D => Sensor Down Left
+E => Sensor Down Right
+
+F => Button Coin
+G => Button Test
+H => Button Service
+I => Button Clear
+
+There is only one TEST, SERVICE and CLEAR. But I dont remember if its on P1 or P2. 
+
+Ok, so now how about the 4 sensors per step? That's is a muxer on the board. It will rotate the devices to get stuff.
+I will explain that on the output part.
+
+So we will have this for outputs:
+ _______________________ ________________________ 
+|         P1 CMD        |          P1 CMD        |
+|   BYTE0       BYTE1   |    BYTE2       BYTE3   |
+| 00000000    00000000  |  00000000    00000000  |
+| xEDCBAZZ    xxxxxNxx  |  IEDCBAZZ    IHxxxFGH  |
+|_______________________|________________________|
+ _________________________________________________
+|                    Not Used                     |
+|     BYTE4       BYTE5       BYTE6       BYTE7   |
+|   000000000    00000000    00000000    00000000 |
+|   xxxxxxxxx    xxxxxxxx    xxxxxxxx    xxxxxxxx | 
+|_________________________________________________|   
+
+A => Light Up Left
+B => Light Up Right
+C => Light Center
+D => Light Down Left
+E => Light Down Right
+
+N => Neon
+
+F => Halo L1
+G => Halo L2
+H => Halo R1
+I => Halo R2
+
+ZZ => Muxer position (a.k.a. sensor number request), 0 to 3 (2 bit muxer with 4 inputs)
+
+So for you getting other sensor data, you need to re-send lamp data. 
+The PIU Game actually makes a cache of lamp data an keep pulling and pushing sensor data to the PC at 60Hz.
+
