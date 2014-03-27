@@ -6,7 +6,10 @@ This uses V-USB Library for an emulated USB interface at ATMEGA328. Other device
 
 WARN: This is the SIMPLE branch. This is intented to start users who just want to put hook their DIY pads to original game machines.
 
-TODO: Publish the clone board schematic.
+Added Fritizing Base Schematic for Protoboard.
+
+TODO: NoobStuff: How to Program the ATMEGA328, how to hookup everything.
+
 
 PS: The V-USB folder (a.k.a. usbdrv) is intact and original. Keeping the licenses of it. It is not my property.
 
