@@ -56,7 +56,7 @@
 /* -------------------------- Device Description --------------------------- */
 
 #define  USB_CFG_VENDOR_ID       0x47, 0x05                             //  That is Vendor ID from PIUIO. The Cypress 0x547
-#define  USB_CFG_DEVICE_ID       0x02, 0x10                             //  That is Device ID from PIUIO. The FX-USB  0x210
+#define  USB_CFG_DEVICE_ID       0x02, 0x10                             //  That is Device ID from PIUIO. The FX-USB  0x1002
 #define USB_CFG_DEVICE_VERSION  0x00, 0x01                              //  USB Device version. 1.0 - Yeah lol.
 #define USB_CFG_VENDOR_NAME     'H', 'A', 'C', 'K', 'I', 'T', 'U', 'P'  //  The device description. It is used to initialize an char array.  
 #define USB_CFG_VENDOR_NAME_LEN 8                                       //  The size of device description.
