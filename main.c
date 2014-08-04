@@ -109,9 +109,10 @@ USB_PUBLIC uchar usbFunctionSetup(uchar data[8]) {
 void pollInputOutput()    {
     //  This will get the inputs.
     //  PIUIO actually sends inverted data.
-    InputData[0] = ~( ( (~GET_LU_P1) << SENSOR_LU) | ((~GET_RU_P1) << SENSOR_RU) | ((~GET_CN_P1) << SENSOR_CN) |  ((~GET_LD_P1) << SENSOR_LD) | ((~GET_RD_P1) << SENSOR_RD) );
-    InputData[1] = ~( ( (~GET_TEST)  << BTN_TEST ) | ((~GET_SERVICE) << BTN_SERVICE) );
-    InputData[2] = ~( ( (~GET_LU_P2) << SENSOR_LU) | ((~GET_RU_P2) << SENSOR_RU) | ((~GET_CN_P2) << SENSOR_CN) |  ((~GET_LD_P2) << SENSOR_LD) | ((~GET_RD_P2) << SENSOR_RD) );
+    
+    InputData[0] = ~( ((~GET_LU_P1) << SENSOR_LU) | ((~GET_RU_P1) << SENSOR_RU) | ((~GET_CN_P1) << SENSOR_CN) |  ((~GET_LD_P1) << SENSOR_LD) | ((~GET_RD_P1) << SENSOR_RD) );
+    InputData[1] = ~( ((GET_TEST)  << BTN_TEST  ) | ((GET_SERVICE) << BTN_SERVICE) );
+    InputData[2] = ~( ((~GET_LU_P2) << SENSOR_LU) | ((~GET_RU_P2) << SENSOR_RU) | ((~GET_CN_P2) << SENSOR_CN) |  ((~GET_LD_P2) << SENSOR_LD) | ((~GET_RD_P2) << SENSOR_RD) );
     InputData[3] = 0xFF;
 }
 
