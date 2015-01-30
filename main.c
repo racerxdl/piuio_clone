@@ -36,15 +36,17 @@
 
 //    PIUIO Bytes
 // This is for Byte1 of the player short
-#define BTN_TEST      1
-#define BTN_SERVICE   6
+
+#define BTN_TEST      0x02
+#define BTN_SERVICE   0x40
 
 // This is for Byte0 of the player short
-#define SENSOR_LU     0
-#define SENSOR_RU     1
-#define SENSOR_CN     2
-#define SENSOR_LD     3
-#define SENSOR_RD     4
+
+#define SENSOR_LU     0x01
+#define SENSOR_RU     0x02
+#define SENSOR_CN     0x04
+#define SENSOR_LD     0x08
+#define SENSOR_RD     0x10
 
 //    Clone Port Map
 
@@ -79,7 +81,7 @@ USB_PUBLIC uchar usbFunctionWrite(uchar *data, uchar len) {
     //    I will keep this part of code, but we wont use to write to outputs. Because lack of IO
     unsigned char i;              
     for(i = 0; datareceived < 8 && i < len; i++, datareceived++)
-               LampData[datareceived] = data[i];    
+     LampData[datareceived] = data[i];    
     if(datareceived == dataLength)    {    //    Time to set OUTPUT
         Output[0] = LampData[0];           //    The AM use unsigned short for those. 
         Output[1] = LampData[2];           //    So we just skip one byte
@@ -93,27 +95,45 @@ USB_PUBLIC uchar usbFunctionSetup(uchar data[8]) {
     if(rq->bRequest == 0xAE)    {                               //    Access Game IO
         switch(rq->bmRequestType)    {
             case 0x40:                                          //    Writing data to outputs
-                datareceived = 0;
-                dataLength = (unsigned char)rq->wLength.word;
+            datareceived = 0;
+            dataLength = (unsigned char)rq->wLength.word;
                 return USB_NO_MSG;                              //    Just tell we want a callback to usbFunctionWrite
-            break;
+                break;
             case 0xC0:                                          //    Reading input data
                 usbMsgPtr = InputData;                          //    Just point to the buffer, and 
                 return 8;                                       //    saying to send 8 bytes to the PC
-            break;
+                break;
+            }
         }
-    }
     return 0;                                                   //    Ops, it cant get here
 }
 
 void pollInputOutput()    {
     //  This will get the inputs.
     //  PIUIO actually sends inverted data.
-    
-    InputData[0] = ~( ((~GET_LU_P1) << SENSOR_LU) | ((~GET_RU_P1) << SENSOR_RU) | ((~GET_CN_P1) << SENSOR_CN) |  ((~GET_LD_P1) << SENSOR_LD) | ((~GET_RD_P1) << SENSOR_RD) );
-    InputData[1] = ~( ((GET_TEST)  << BTN_TEST  ) | ((GET_SERVICE) << BTN_SERVICE) );
-    InputData[2] = ~( ((~GET_LU_P2) << SENSOR_LU) | ((~GET_RU_P2) << SENSOR_RU) | ((~GET_CN_P2) << SENSOR_CN) |  ((~GET_LD_P2) << SENSOR_LD) | ((~GET_RD_P2) << SENSOR_RD) );
-    InputData[3] = 0xFF;
+    InputData[0] = 0xFF;
+    InputData[1] = 0xFF;
+    InputData[2] = 0xFF;
+    InputData[3] = 0xFF;  
+
+    // PLS, someone DO THIS BETTER. LOL
+
+    if(GET_LD_P1)   { InputData[0] |= SENSOR_LD;    }else{ InputData[0] &= ~(SENSOR_LD);    };
+    if(GET_LU_P1)   { InputData[0] |= SENSOR_LU;    }else{ InputData[0] &= ~(SENSOR_LU);    };
+    if(GET_CN_P1)   { InputData[0] |= SENSOR_CN;    }else{ InputData[0] &= ~(SENSOR_CN);    };
+    if(GET_RU_P1)   { InputData[0] |= SENSOR_RU;    }else{ InputData[0] &= ~(SENSOR_RU);    };
+    if(GET_RD_P1)   { InputData[0] |= SENSOR_RD;    }else{ InputData[0] &= ~(SENSOR_RD);    };
+
+
+    if(GET_LD_P2)   { InputData[2] |= SENSOR_LD;    }else{ InputData[2] &= ~(SENSOR_LD);    };
+    if(GET_LU_P2)   { InputData[2] |= SENSOR_LU;    }else{ InputData[2] &= ~(SENSOR_LU);    };
+    if(GET_CN_P2)   { InputData[2] |= SENSOR_CN;    }else{ InputData[2] &= ~(SENSOR_CN);    };
+    if(GET_RU_P2)   { InputData[2] |= SENSOR_RU;    }else{ InputData[2] &= ~(SENSOR_RU);    };
+    if(GET_RD_P2)   { InputData[2] |= SENSOR_RD;    }else{ InputData[2] &= ~(SENSOR_RD);    };
+
+    if(GET_SERVICE) { InputData[1] |= BTN_SERVICE;  }else{ InputData[1] &= ~(BTN_SERVICE);  };
+    if(GET_TEST)    { InputData[1] |= BTN_TEST;     }else{ InputData[1] &= ~(BTN_TEST);     };
+
 }
 
 int main() {
@@ -125,7 +145,7 @@ int main() {
     
     for(i=0;i<8;i++)
         InputData[i] = 0xFF;
-        
+    
     usbInit();
     usbDeviceDisconnect();                      // enforce re-enumeration
     for(i = 0; i<250; i++) {                    // wait 500 ms
