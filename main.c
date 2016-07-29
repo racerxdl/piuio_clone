@@ -142,7 +142,10 @@ int main() {
 
     DDRB = 0;
     DDRC = 0;
-    
+	// make it simpler and use internal pullups
+	PORTB =	0x3F;
+	PORTC = 0x3F;
+	
     for(i=0;i<8;i++)
         InputData[i] = 0xFF;
     
