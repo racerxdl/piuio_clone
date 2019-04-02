@@ -8,13 +8,13 @@
 /*  By: Lucas Teske                                        */
 /*  Arduino Version by: Mattia Pini                        */
 /***********************************************************/
-/*     Basicly this is an PIUIO Clone with an ATMEGA328    */
+/*     Basicly this is an PIUIO Clone with an Arduino      */
 /*     It uses V-USB for the USB Interface and few chips   */
 /***********************************************************/
 /*           This is main code from PIUIO Clone            */
 /***********************************************************/
 /*                    License is GPLv3                     */
-/*  Please consult https://github.com/racerxdl/piuio_clone */
+/* Please consult https://github.com/martirius/piuio_clone */
 /***********************************************************/
 //#include "usbconfig.h"
 #include <usbdrv.h>
@@ -73,19 +73,6 @@ USB_PUBLIC uchar usbFunctionSetup(uchar data[8]) {
     return 0;                                                   //    Ops, it cant get here
 }
 
-/*void shiftoutAddress(unsigned int shiftAddress) {
-  //we use directly PORT for faster shifting
-  CLRBIT(PORTB, LATCH);
-  int i = 0;
-  for(i;i< 8;i++){
-    
-  }
-  shiftOut(dataPin, clockPin, MSBFIRST, (shiftAddress >> 8));
-  shiftOut(dataPin, clockPin, MSBFIRST, (shiftAddress & 0xFF));
-  digitalWrite(latchPin, HIGH);
-  delayMicroseconds(50);
-}*/
-
 void pollInputOutput()    {
     //    This will set outputs and get inputs
     //    The board will use 4067 muxer that is 16-to-1 muxer.
@@ -94,7 +81,7 @@ void pollInputOutput()    {
     unsigned char inputn, tmp1,tmp2;    
     //SETBIT(PORTB,3);                                                        //    Disable the latches input
     for(inputn=0;inputn<16;inputn++)    {
-        //PORTC = inputn;                                                     //    Sets the muxer position
+        PORTC = inputn;                                                     //    Sets the muxer position
         tmp1 = GETBIT(PINB,0);                                              //    Gets the input
         if(tmp1 > 0)
             SETBIT(Input[(inputn/16)*2],inputn%8);                          //    Sets if input = 1
@@ -113,10 +100,11 @@ void pollInputOutput()    {
     halo |= neon_bit << 2;
     halo |= cabinet_buttons << 2;
     
+    //first 4 bits are for player 1 , other 4 bits for player 2
     unsigned char pads_lights = Output[0] & 0b00111100;
     pads_lights = pads_lights >> 2;
     pads_lights |= (Output[2] & 0b00111100) << 2;  
-    
+    //i dont know if DDR cab works the same way as PIU, so i provide the value for muxers on pads too 
     unsigned char muxers = Output[0] & 3 | ((Output[2] & 3 ) << 2);
     
     CLRBIT(PORTB,LATCH);
@@ -125,8 +113,8 @@ void pollInputOutput()    {
     SPI.transfer(pads_lights);
     //i decided to use shift register for cabinet and pad lights, used PORTC 0-3 for muxers pads 
     SETBIT(PORTB,LATCH);
-    PORTC = muxers;
-    /*CLRBIT(PORTB,3);                                                        //    Enable the latches input
+    //PORTC = muxers;                                                        //uncomment this if you need muxers on pad, but watchout at the conflicts were you take the input from the pads
+    CLRBIT(PORTB,3);                                                        //    Enable the latches input
     for(inputn=0;inputn<8;inputn++)    {
         PORTC = inputn;                                                     //    Sets the address
         tmp1 = GETBIT(Output[0],inputn);                                    //    Gets the output data
@@ -135,7 +123,7 @@ void pollInputOutput()    {
         if(tmp2 > 0) {SETBIT(PORTB,2);} else {CLRBIT(PORTB,2);}; 
         
     }
-    SETBIT(PORTB,3);*/                                                        //    Disable the latches input, just in case.
+    SETBIT(PORTB,3);                                                       //    Disable the latches input, just in case.
     
                                                                             //    Okay, so now we can set the output buffer, just in case the PC asks now the inputs
     InputData[0] = ~Input[0];                                               //    Andamiro uses unsigned short here also
@@ -160,7 +148,6 @@ void setup() {
         delayMicroseconds(100);
     }
     usbDeviceConnect();
-    sei();
     SPI.begin();
     SPI.setBitOrder(LSBFIRST);
 
