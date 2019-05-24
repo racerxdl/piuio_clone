@@ -23,8 +23,8 @@
 //use PORT F for cabinet and pad P1((Cabinet=(left=PF0,center=PF1,right,=PF2),Pad=(DOWN=PF3,LEFT=PF4,UP=PF6,RIGHT=PF7))
 //use PORT K for cabinet and pad P2((Cabinet=(left=PK0,center=PK1,right,=PK2),Pad=(DOWN=PK3,LEFT=PK4,UP=PK6,RIGHT=PK7))
 //use PORT G for Coin->PG2,Service->PG1,Menu->PG0
-//use PORT L for P1 light
-//use PORT C for P2 light
+//use PORT L for Pads lights
+//use PORT C for Cabinet lights
 
 #define GETBIT(port,_bit) ((port) & (0x01 << (_bit)))     //    Get Byte bit
 #define SETBIT(port,_bit) ((port) |= (0x01 << (_bit)))    //    Set Byte bit
@@ -72,8 +72,19 @@ USB_PUBLIC uchar usbFunctionSetup(uchar data[8]) {
 
 void pollInputOutput()    {
     //on Arduino Mega we don't use muxer nor output latch
-    unsigned char inputn, tmp1,tmp2; 
-                                                                    //    Okay, so now we can set the output buffer, just in case the PC asks now the inputs
+
+      //HERE WE FILTER THE BITS FROM THE GAME, openITG
+    unsigned char neon_bit = Output[1] & 0b00000100;
+    unsigned char cabinet_buttons = Output[1] & 0b00011000;
+    unsigned char halo = (Output[3] & 0b00000111) | ((Output[2] & 0b10000000)>> 4 );
+    halo |= neon_bit << 2;
+    halo |= cabinet_buttons << 2;
+  
+    //first 4 bits are for player 1 , other 4 bits for player 2
+    unsigned char pads_lights = Output[0] & 0b00111100;
+    pads_lights = pads_lights << 2;
+    pads_lights |= (Output[2] & 0b00111100) >> 2; 
+                                                                      //    Okay, so now we can set the output buffer, just in case the PC asks now the inputs
     Input[0] = PINF;
     Input[1] = PINK;
     InputData[0] = ~Input[0];
