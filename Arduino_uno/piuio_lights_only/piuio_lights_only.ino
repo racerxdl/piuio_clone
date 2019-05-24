@@ -85,9 +85,10 @@ void pollInputOutput()    {
     unsigned char muxers = Output[0] & 3 | ((Output[2] & 3 ) << 2);
     
     CLRBIT(PORTB,LATCH);
-    SPI.transfer(halo);
+    //packets have to be inverted because DDR lights are active low
+    SPI.transfer(~halo);
     //first 74hc595 is for pads lights and second for cabinet lights
-    SPI.transfer(pads_lights);
+    SPI.transfer(~pads_lights);
     //i decided to use shift register for cabinet and pad lights, used PORTC 0-3 for muxers pads 
     SETBIT(PORTB,LATCH);
     PORTC = muxers;
