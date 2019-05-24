@@ -18,9 +18,6 @@
 /***********************************************************/
 //#include "usbconfig.h"
 #include <usbdrv.h>
-#include <avr/wdt.h>
-#include <avr/pgmspace.h>
-//    Some Macros to helpce
 
 //use PORT E for usb connection(MODIFY usbconfig.h)
 //use PORT F for cabinet and pad P1((Cabinet=(left=PF0,center=PF1,right,=PF2),Pad=(DOWN=PF3,LEFT=PF4,UP=PF6,RIGHT=PF7))
@@ -76,29 +73,7 @@ USB_PUBLIC uchar usbFunctionSetup(uchar data[8]) {
 void pollInputOutput()    {
     //on Arduino Mega we don't use muxer nor output latch
     unsigned char inputn, tmp1,tmp2; 
-    /*   
-    SETBIT(PORTB,3);                                                        //    Disable the latches input
-    for(inputn=0;inputn<16;inputn++)    {
-        PORTC = inputn;                                                     //    Sets the muxer position
-        tmp1 = GETBIT(PINB,0);                                              //    Gets the input
-        if(tmp1 > 0)
-            SETBIT(Input[(inputn/16)*2],inputn%8);                          //    Sets if input = 1
-        else
-            CLRBIT(Input[(inputn/16)*2],inputn%8);                          //    Clears if input = 0
-    }
-
-    CLRBIT(PORTB,3);                                                        //    Enable the latches input
-    for(inputn=0;inputn<8;inputn++)    {
-        PORTC = inputn;                                                     //    Sets the address
-        tmp1 = GETBIT(Output[0],inputn);                                    //    Gets the output data
-        tmp2 = GETBIT(Output[1],inputn);
-        if(tmp1 > 0) {SETBIT(PORTB,1);} else {CLRBIT(PORTB,1);};            //    Sets/Clear the output at latches
-        if(tmp2 > 0) {SETBIT(PORTB,2);} else {CLRBIT(PORTB,2);}; 
-        
-    }
-    SETBIT(PORTB,3);                                                        //    Disable the latches input, just in case.
-    */
-                                                                            //    Okay, so now we can set the output buffer, just in case the PC asks now the inputs
+                                                                    //    Okay, so now we can set the output buffer, just in case the PC asks now the inputs
     Input[0] = PINF;
     Input[1] = PINK;
     InputData[0] = ~Input[0];
@@ -110,7 +85,6 @@ void pollInputOutput()    {
 
 void setup() {
       unsigned char i;
-    wdt_enable(WDTO_1S);
     //Set port as input
     DDRF = 0;    //P1
     DDRK = 0;    //P2  
@@ -120,13 +94,11 @@ void setup() {
     DDRL = 255;
     PORTC = 0;
     PORTL = 0;
-
     for(i=0;i<8;i++)
         InputData[i] = 0xFF;
     usbInit();
     usbDeviceDisconnect();                      // enforce re-enumeration
     for(i = 0; i<250; i++) {                    // wait 500 ms
-        wdt_reset();                            // keep the watchdog happy
         delayMicroseconds(100);
     }
     usbDeviceConnect();
@@ -135,7 +107,6 @@ void setup() {
 }
 
 void loop() {
-        wdt_reset();                            // keep the watchdog happy
         usbPoll();
         pollInputOutput();
 }
