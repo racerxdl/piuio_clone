@@ -17,7 +17,5 @@ Load the program on the arduino
 Connect the board to your pc with the USB of the circuit  
 Connect the cables to your DDR Cabinet  
 Enjoy!!   
-
-
-BUG: at the moment the system hang sometimes for unknown reasons and it resets; if someone can figure out why it would be very helpful  
+  
 The program doesn't run on Arduino Pro Mini: it keeps disconnecting and reconnecting but i don't know why.  
