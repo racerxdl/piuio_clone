@@ -10,7 +10,7 @@ It's thinked for running with OpenITG and StepMania and it can handle all cabine
 #Instructions for use  
 Download Arduino IDE <= 1.0.5  
 Copy usbdrv folder in Arduino IDE's libraries folder  
-Copy usbconfig.h (from Arduino_Uno if you want to run the code on Arduino Uno; choose Mega otherwise)  
+Copy usbconfig.h (from Arduino_Uno if you want to run the code on Arduino Uno; choose Mega otherwise) to just copied usbdrv folder and replace the existing one  
 Build the circuit like the schematic(released soon)  
 Run Arduino IDE and open the projects  
 Load the program on the arduino  
