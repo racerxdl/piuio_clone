@@ -162,7 +162,9 @@ USB messages, even if they address another (low-speed) device on the same bus.
  * for flags in the descriptor configuration).
  */
 #define USB_NO_MSG  ((usbMsgLen_t)-1)   /* constant meaning "no message" */
-
+ #ifdef __cplusplus
+extern "C" {
+#endif
 struct usbRequest;  /* forward declaration */
 
 USB_PUBLIC void usbInit(void);
@@ -237,7 +239,7 @@ USB_PUBLIC void usbSetInterrupt3(uchar *data, uchar len);
 #endif /* USB_CFG_HAVE_INTRIN_ENDPOINT */
 #if USB_CFG_HID_REPORT_DESCRIPTOR_LENGTH    /* simplified interface for backward compatibility */
 #define usbHidReportDescriptor  usbDescriptorHidReport
-/* should be declared as: PROGMEM char usbHidReportDescriptor[]; */
+/* should be declared as: PROGMEM const  char usbHidReportDescriptor[]; */
 /* If you implement an HID device, you need to provide a report descriptor.
  * The HID report descriptor syntax is a bit complex. If you understand how
  * report descriptors are constructed, we recommend that you use the HID
@@ -379,6 +381,9 @@ extern volatile schar   usbRxLen;
  * sending data, you must set the opposite value of the token which should come
  * first.
  */
+  #ifdef __cplusplus
+}
+#endif
 
 #endif  /* __ASSEMBLER__ */
 
@@ -450,43 +455,43 @@ extern volatile schar   usbRxLen;
 #ifndef __ASSEMBLER__
 extern
 #if !(USB_CFG_DESCR_PROPS_DEVICE & USB_PROP_IS_RAM)
-PROGMEM
+PROGMEM const 
 #endif
 char usbDescriptorDevice[];
 
 extern
 #if !(USB_CFG_DESCR_PROPS_CONFIGURATION & USB_PROP_IS_RAM)
-PROGMEM
+PROGMEM const 
 #endif
 char usbDescriptorConfiguration[];
 
 extern
 #if !(USB_CFG_DESCR_PROPS_HID_REPORT & USB_PROP_IS_RAM)
-PROGMEM
+PROGMEM const 
 #endif
 char usbDescriptorHidReport[];
 
 extern
 #if !(USB_CFG_DESCR_PROPS_STRING_0 & USB_PROP_IS_RAM)
-PROGMEM
+PROGMEM const 
 #endif
 char usbDescriptorString0[];
 
 extern
 #if !(USB_CFG_DESCR_PROPS_STRING_VENDOR & USB_PROP_IS_RAM)
-PROGMEM
+PROGMEM const 
 #endif
 int usbDescriptorStringVendor[];
 
 extern
 #if !(USB_CFG_DESCR_PROPS_STRING_PRODUCT & USB_PROP_IS_RAM)
-PROGMEM
+PROGMEM const 
 #endif
 int usbDescriptorStringDevice[];
 
 extern
 #if !(USB_CFG_DESCR_PROPS_STRING_SERIAL_NUMBER & USB_PROP_IS_RAM)
-PROGMEM
+PROGMEM const 
 #endif
 int usbDescriptorStringSerialNumber[];
 

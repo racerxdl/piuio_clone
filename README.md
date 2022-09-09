@@ -1,10 +1,21 @@
 PIUIO Board Clone
 ===========
 
-This is an clone of the original Pump It Up USB IO Board. It's fully compatible with the original one.
-This uses V-USB Library for an emulated USB interface at ATMEGA328. Other devices may be compatible too.
+This is a clone of the original Pump It Up USB IO Board running on an Arduino.
+It uses the usbdrv library modified for running with Arduino IDE (version <= 1.0.5)
 
-TODO: Publish the clone board schematic.
 
-PS: The V-USB folder (a.k.a. usbdrv) is intact and original. Keeping the licenses of it. It is not my property.
+It's thinked for running with OpenITG and StepMania and it can handle all cabinet and pads lights.
 
+#Instructions for use  
+Download Arduino IDE <= 1.0.5  
+Copy usbdrv folder in Arduino IDE's libraries folder  
+Copy usbconfig.h (from Arduino_Uno if you want to run the code on Arduino Uno; choose Mega otherwise) to just copied usbdrv folder and replace the existing one  
+Build the circuit like the schematic(released soon)  
+Run Arduino IDE and open the projects  
+Load the program on the arduino  
+Connect the board to your pc with the USB of the circuit  
+Connect the cables to your DDR Cabinet  
+Enjoy!!   
+  
+The program doesn't run on Arduino Pro Mini: it keeps disconnecting and reconnecting but i don't know why.  
